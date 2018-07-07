@@ -1,10 +1,5 @@
 <launch>  
 
-  <!-- upload some parameters on the parameter server -->
-  <group ns="towr">
-    <param name="rosbag_folder" value="$(find towr_ros)/bags" type="string"/>   
-  </group> 
-
   <!-- translate keyboard input to TOWR commands -->
   <node 
     name="user_interface" 
@@ -29,7 +24,7 @@
     type="goal_pose_publisher" 
     output="screen">
   </node>
-    
+
   <!-- start the actual NLP solver using TOWR -->
   <node 
     name="towr_ros" 

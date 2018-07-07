@@ -32,20 +32,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string>
 
-#include <ros/publisher.h>
-#include <ros/subscriber.h>
+#include <ros/ros.h>
 #include <rosbag/bag.h>
 
 #include <xpp_states/robot_state_cartesian.h>
 #include <xpp_msgs/RobotStateCartesian.h>
-#include <xpp_msgs/RobotStateCartesianTrajectory.h>
 #include <xpp_msgs/RobotParameters.h>
-
 #include <towr_ros/TowrCommand.h>
-#include <towr/initialization/gait_generator.h>
 
 #include <towr/towr.h>
 #include <ifopt/ipopt.h>
+
 
 namespace towr {
 
@@ -59,28 +56,27 @@ public:
   virtual ~TowrRos () = default;
 
 private:
-
   void UserCommandCallback(const TowrCommandMsg& msg);
 
   XppVec GetTrajectory() const;
-  std::vector<XppVec>GetIntermediateSolutions();
 
-
+  // publishing to rviz with ROS bag
   ::ros::Subscriber user_command_sub_;
-  ::ros::Publisher cart_trajectory_pub_;
+  ::ros::Publisher initial_state_pub_;
   ::ros::Publisher robot_parameters_pub_;
 
+  void SetInitialFromNominal(const std::vector<Vector3d>& nomial_stance_B);
+  void PublishInitial();
+  BaseState initial_base_;
+  std::vector<Vector3d> initial_ee_pos_;
 
+  HeightMap::Ptr terrain_;
   TOWR towr_;
   ifopt::Ipopt::Ptr solver_;
+  double visualization_dt_; ///< discretization of output trajectory (1/TaskServoHz)
 
-  GaitGenerator::Ptr gait_;
-  RobotModel model_;
-  HeightMap::Ptr terrain_;
-
-  double output_dt_; ///< discretization of output trajectory (1/TaskServoHz)
-  std::string rosbag_folder_; ///< folder to save bags
-
+private:
+  std::vector<XppVec>GetIntermediateSolutions();
   xpp_msgs::RobotParameters BuildRobotParametersMsg(const RobotModel& model) const;
 
   void SaveOptimizationAsRosbag(const std::string& bag_name,

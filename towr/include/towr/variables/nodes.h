@@ -45,7 +45,7 @@ namespace towr {
  * polynomial is also fully defined by the value and first-derivative of the
  * start and end of the polynomial as well as the duration. This way of
  * specifying a polynomial is called "Hermite". These are the node values
- * of position and velocity.
+ * composed of position and velocity.
  *
  * @sa class CubicHermitePolynomial
  */
@@ -110,7 +110,7 @@ public:
   /**
    * @returns the bounds on position and velocity of each node and dimension.
    */
-  virtual VecBound GetBounds () const override;
+  VecBound GetBounds () const override;
 
   /**
    * @returns All the nodes that can be used to reconstruct the spline.
@@ -165,7 +165,6 @@ public:
                      const VectorXd& val);
 
 protected:
-
   /**
    * @param n_dim  The number of dimensions (x,y,..) each node has.
    * @param variable_name  The name of the variables in the optimization problem.

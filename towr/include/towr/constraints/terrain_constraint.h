@@ -45,6 +45,8 @@ namespace towr {
  * lifting during swing-phase. This is convenient.
  *
  * Attention: This is enforced only at the spline nodes.
+ *
+ * @ingroup Constraints
  */
 class TerrainConstraint : public ifopt::ConstraintSet {
 public:
@@ -58,7 +60,7 @@ public:
   TerrainConstraint (const HeightMap::Ptr& terrain, std::string ee_motion_id);
   virtual ~TerrainConstraint () = default;
 
-  virtual void InitVariableDependedQuantities(const VariablesPtr& x) override;
+  void InitVariableDependedQuantities(const VariablesPtr& x) override;
 
   VectorXd GetValues() const override;
   VecBound GetBounds() const override;

@@ -48,7 +48,9 @@ namespace towr {
  * we approximate the friction cone by a 4-sided pyramid.
  *
  * Attention: Constraint is enforced only at the spline nodes. In between
- * violations of this contraint can occur.
+ * violations of this constraint can occur.
+ *
+ * @ingroup Constraints
  */
 class ForceConstraint : public ifopt::ConstraintSet {
 public:
@@ -66,7 +68,7 @@ public:
                    EE endeffector_id);
   virtual ~ForceConstraint () = default;
 
-  virtual void InitVariableDependedQuantities(const VariablesPtr& x) override;
+  void InitVariableDependedQuantities(const VariablesPtr& x) override;
 
   VectorXd GetValues() const override;
   VecBound GetBounds() const override;

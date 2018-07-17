@@ -39,6 +39,8 @@ namespace towr {
  *
  * Every node is optimized over, in contrast to PhaseNodes, where multiple
  * nodes in the spline are represented by the same optimization variables.
+ *
+ * @ingroup Variables
  */
 class BaseNodes : public Nodes {
 public:
@@ -49,7 +51,7 @@ public:
   BaseNodes (int n_nodes, std::string variable_id);
   virtual ~BaseNodes () = default;
 
-  virtual std::vector<IndexInfo> GetNodeInfoAtOptIndex(int idx) const override;
+  std::vector<IndexInfo> GetNodeInfoAtOptIndex(int idx) const override;
 };
 
 } /* namespace towr */

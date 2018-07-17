@@ -42,6 +42,8 @@ namespace towr {
  * This class holds the current variables determining the alternating swing-
  * and stance durations of one foot. These durations are then used in the
  * Spline together with NodeVariables to construct foot motions and forces.
+ *
+ * @ingroup Variables
  */
 class PhaseDurations : public ifopt::VariableSet {
 public:
@@ -72,12 +74,12 @@ public:
   /**
    * @returns The optimization variables (phase durations [s]).
    */
-  virtual VectorXd GetValues() const override;
+  VectorXd GetValues() const override;
 
   /**
    * @brief  Sets the phase durations from pure Eigen optimization variables.
    */
-  virtual void SetVariables(const VectorXd& x) override;
+  void SetVariables(const VectorXd& x) override;
 
   /**
    * @returns The maximum and minimum time each phase is allowed to take.

@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <towr/variables/spline_holder.h>
 #include <towr/variables/spline.h>
-#include <towr/parameters.h>
 
 #include "time_discretization_constraint.h"
 
@@ -42,23 +41,24 @@ namespace towr {
  * @brief Keeps the 6D base motion in a specified range.
  *
  * In general this constraint should be avoided, since a similar affect can be
- * achieved with @ref RangeOfMotion.
+ * achieved with RangeOfMotionConstraint.
+ *
+ * @ingroup Constraints
  */
 class BaseMotionConstraint : public TimeDiscretizationConstraint {
 public:
-
   /**
    * @brief Links the base variables and sets hardcoded bounds on the state.
-   * @param params  The variables describing the optimization problem.
+   * @param T  The total time of the optimization horizon.
+   * @param dt The discretization interval of the constraints.
    * @param spline_holder  Holds pointers to the base variables.
    */
-  BaseMotionConstraint (const Parameters& params,
-                        const SplineHolder& spline_holder);
+  BaseMotionConstraint (double T, double dt, const SplineHolder& spline_holder);
   virtual ~BaseMotionConstraint () = default;
 
   void UpdateConstraintAtInstance (double t, int k, VectorXd& g) const override;
   void UpdateBoundsAtInstance (double t, int k, VecBound&) const override;
-  virtual void UpdateJacobianAtInstance(double t, int k, std::string, Jacobian&) const override;
+  void UpdateJacobianAtInstance(double t, int k, std::string, Jacobian&) const override;
 
 private:
   NodeSpline::Ptr base_linear_;

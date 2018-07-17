@@ -34,11 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace towr {
 
+/**
+ * @addtogroup Terrains
+ * @{
+ */
 
 class FlatGround : public HeightMap {
 public:
   FlatGround(double height = 0.0);
-  virtual double GetHeight(double x, double y)  const override { return height_; };
+  double GetHeight(double x, double y)  const override { return height_; };
 
 private:
   double height_; // [m]
@@ -47,8 +51,8 @@ private:
 
 class Block : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y)  const override;
-  virtual double GetHeightDerivWrtX(double x, double y) const override;
+  double GetHeight(double x, double y)  const override;
+  double GetHeightDerivWrtX(double x, double y) const override;
 
 private:
   double block_start = 0.7;
@@ -62,7 +66,7 @@ private:
 
 class Stairs : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y) const override;
+  double GetHeight(double x, double y) const override;
 
 private:
   double first_step_start_  = 1.0;
@@ -75,13 +79,13 @@ private:
 
 class Gap : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y) const override;
-  virtual double GetHeightDerivWrtX(double x, double y) const override;
-  virtual double GetHeightDerivWrtXX(double x, double y) const override;
+  double GetHeight(double x, double y) const override;
+  double GetHeightDerivWrtX(double x, double y) const override;
+  double GetHeightDerivWrtXX(double x, double y) const override;
 
 private:
   const double gap_start_ = 1.0;
-  const double w = 0.6;
+  const double w = 0.5;
   const double h = 1.5;
 
   const double slope_ = h/w;
@@ -101,8 +105,8 @@ private:
 
 class Slope : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y) const override;
-  virtual double GetHeightDerivWrtX(double x, double y) const override;
+  double GetHeight(double x, double y) const override;
+  double GetHeightDerivWrtX(double x, double y) const override;
 
 private:
   const double slope_start_ = 1.0;
@@ -118,8 +122,8 @@ private:
 
 class Chimney : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y) const override;
-  virtual double GetHeightDerivWrtY(double x, double y) const override;
+  double GetHeight(double x, double y) const override;
+  double GetHeightDerivWrtY(double x, double y) const override;
 
 private:
   const double x_start_ = 1.0;
@@ -133,8 +137,8 @@ private:
 
 class ChimneyLR : public HeightMap {
 public:
-  virtual double GetHeight(double x, double y) const override;
-  virtual double GetHeightDerivWrtY(double x, double y) const override;
+  double GetHeight(double x, double y) const override;
+  double GetHeightDerivWrtY(double x, double y) const override;
 
 private:
   const double x_start_ = 0.5;
@@ -146,6 +150,7 @@ private:
   const double x_end2_ = x_start_+2*length_;
 };
 
+/** @}*/
 
 } /* namespace towr */
 

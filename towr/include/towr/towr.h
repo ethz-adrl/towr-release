@@ -43,6 +43,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "parameters.h"
 
 
+/**
+ * @brief Entire code of this project is defined in this namespace.
+ */
 namespace towr {
 
 /**
@@ -134,7 +137,6 @@ private:
    * @returns the solver independent optimization problem.
    */
   ifopt::Problem BuildNLP();
-
 };
 
 } /* namespace towr */

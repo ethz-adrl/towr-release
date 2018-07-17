@@ -35,11 +35,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace towr {
 
 DynamicConstraint::DynamicConstraint (const DynamicModel::Ptr& m,
-                                      const Parameters& params,
+                                      double T, double dt,
                                       const SplineHolder& spline_holder)
-    :TimeDiscretizationConstraint(params.t_total_,
-                                  params.dt_constraint_dynamic_,
-                                  "dynamic")
+    :TimeDiscretizationConstraint(T, dt, "dynamic")
 {
   model_ = m;
 
@@ -97,7 +95,6 @@ DynamicConstraint::UpdateJacobianAtInstance(double t, int k, std::string var_set
 
   // sensitivity of dynamic constraint w.r.t. endeffector variables
   for (int ee=0; ee<model_->GetEECount(); ++ee) {
-
     if (var_set == id::EEForceNodes(ee)) {
       Jacobian jac_ee_force = ee_forces_.at(ee)->GetJacobianWrtNodes(t,kPos);
       jac_model = model_->GetJacobianWrtForce(jac_ee_force, ee);

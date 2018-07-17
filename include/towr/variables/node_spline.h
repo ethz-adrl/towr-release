@@ -38,7 +38,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace towr {
 
-
 /**
  * @brief A spline built from node values and fixed polynomial durations.
  *
@@ -46,6 +45,8 @@ namespace towr {
  * fixed polynomial durations to construct a sequence of CubicHermitePolynomial.
  * For this it observers whether the node values change and then updates all the
  * polynomials accordingly.
+ *
+ * @ingroup Variables
  */
 class NodeSpline : public Spline, public NodesObserver {
 public:
@@ -103,7 +104,6 @@ public:
   GetJacobianOfPosWrtDurations(double t) const { assert(false); } // durations are fixed here
 
 protected:
-
   /**
    * The size and non-zero elements of the Jacobian of the position w.r.t nodes.
    */
@@ -119,7 +119,6 @@ protected:
    */
   void FillJacobianWrtNodes (int poly_id, double t_local, Dx dxdt,
                              Jacobian& jac, bool fill_with_zeros) const;
-
 };
 
 } /* namespace towr */

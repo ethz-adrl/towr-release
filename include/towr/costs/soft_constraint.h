@@ -38,11 +38,23 @@ namespace towr {
  * @brief Converts a constraint to a cost by weighing the quadratic violations.
  *
  * Let constraint g(x) \in R^m with upper bound b_u and lower bound b_l.
- * Let g'(x) = g(x) - 0.5(b_u+b_l) = g(x) - b
- * And it's derivative dg'(x)/dx = J(x).
- * Define a cost as c(x) = 0.5 * g'^T * W * g', where W = diag(w1,...,wm).
+ * Let
+ *
+ *     g'(x) = g(x) - 0.5(b_u+b_l) = g(x) - b
+ *
+ * And it's derivative
+ *
+ *     dg'(x)/dx = J(x).
+ *
+ * Define a cost as
+ *
+ *     c(x) = 0.5 * g'^T * W * g', where W = diag(w1,...,wm).
+ *
  * Then the gradient of the cost is defined as:
- * dc(x)/dx = (g'(x)^T * W * J)^T = J^T * W * (g(x)-b).
+ *
+ *     dc(x)/dx = (g'(x)^T * W * J)^T = J^T * W * (g(x)-b).
+ *
+ * @ingroup Costs
  */
 class SoftConstraint : public ifopt::Component {
 public:
@@ -68,18 +80,18 @@ private:
    *
    * c(x) = 0.5 * (g-b)^T * W * (g-b)
    */
-  virtual VectorXd GetValues () const override;
+  VectorXd GetValues () const override;
 
   /**
    * @brief The row-vector of derivatives of the cost term.
    *
    * dc(x)/dx = J^T * W * (g-b)
    */
-  virtual Jacobian GetJacobian() const override;
+  Jacobian GetJacobian() const override;
 
   // doesn't exist for cost, generated run-time error when used
-  virtual VecBound GetBounds() const override final { return VecBound(GetRows(), ifopt::NoBound); };
-  virtual void SetVariables(const VectorXd& x) override final { assert(false); };
+  VecBound GetBounds() const final { return VecBound(GetRows(), ifopt::NoBound); };
+  void SetVariables(const VectorXd& x) final { assert(false); };
 };
 
 } /* namespace towr */

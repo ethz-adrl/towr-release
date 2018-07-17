@@ -46,6 +46,8 @@ namespace towr {
  * Attention: At this point last phase duration is not an optimization variable
  * and a way should be found to optimize over all phases while setting the
  * total duration by constraint and not through hard parameterization.
+ *
+ * @ingroup Constraints
  */
 class TotalDurationConstraint : public ifopt::ConstraintSet {
 public:
@@ -54,7 +56,7 @@ public:
   TotalDurationConstraint(double T_total, int ee);
   ~TotalDurationConstraint() = default;
 
-  virtual void InitVariableDependedQuantities(const VariablesPtr& x) override;
+  void InitVariableDependedQuantities(const VariablesPtr& x) override;
 
   VectorXd GetValues() const override;
   VecBound GetBounds() const override;

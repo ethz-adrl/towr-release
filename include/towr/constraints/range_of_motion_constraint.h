@@ -35,7 +35,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <towr/variables/euler_converter.h>
 
 #include <towr/models/kinematic_model.h>
-#include <towr/parameters.h>
 
 #include "time_discretization_constraint.h"
 
@@ -50,6 +49,8 @@ namespace towr {
   * This constraint calculates the position of of the contact expressed in the
   * current CoM frame and constrains it to lie in a box around the nominal/
   * natural contact position for that leg.
+  *
+  * @ingroup Constraints
   */
 class RangeOfMotionConstraint : public TimeDiscretizationConstraint {
 public:
@@ -59,12 +60,13 @@ public:
   /**
    * @brief Constructs a constraint instance.
    * @param robot_model   The kinematic restrictions of the robot.
-   * @param params        Parameters defining the optimization problem.
+   * @param T   The total duration of the optimization.
+   * @param dt  the discretization intervall at which to enforce constraints.
    * @param ee            The endeffector for which to constrain the range.
    * @param spline_holder Pointer to the current variables.
    */
   RangeOfMotionConstraint(const KinematicModel::Ptr& robot_model,
-                          const Parameters& params,
+                          double T, double dt,
                           const EE& ee,
                           const SplineHolder& spline_holder);
   virtual ~RangeOfMotionConstraint() = default;
@@ -81,7 +83,7 @@ private:
   // see TimeDiscretizationConstraint for documentation
   void UpdateConstraintAtInstance (double t, int k, VectorXd& g) const override;
   void UpdateBoundsAtInstance (double t, int k, VecBound&) const override;
-  virtual void UpdateJacobianAtInstance(double t, int k, std::string, Jacobian&) const override;
+  void UpdateJacobianAtInstance(double t, int k, std::string, Jacobian&) const override;
 
   int GetRow(int node, int dimension) const;
 };

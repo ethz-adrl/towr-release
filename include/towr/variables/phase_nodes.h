@@ -42,6 +42,8 @@ namespace towr {
  * same optimization variable. This is because a foot in stance cannot
  * move (or a force in flight must be zero). This makes the number of
  * optimization variables less than the total node values.
+ *
+ * @ingroup Variables
  */
 class PhaseNodes : public Nodes {
 public:
@@ -76,7 +78,7 @@ public:
 
   virtual ~PhaseNodes() = default;
 
-  virtual std::vector<IndexInfo> GetNodeInfoAtOptIndex(int idx) const override;
+  std::vector<IndexInfo> GetNodeInfoAtOptIndex(int idx) const override;
 
   /**
    * @returns the value of the first node of the phase.
@@ -177,8 +179,8 @@ private:
   void SetBoundsEEForce();
 
   std::vector<int> GetAdjacentPolyIds(int node_id) const;
-
 };
+
 } /* namespace towr */
 
 #endif /* TOWR_VARIABLES_PHASE_NODES_H_ */

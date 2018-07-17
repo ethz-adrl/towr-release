@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
-project(towr VERSION 1.3.1)
+project(towr VERSION 1.3.2)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(ifopt 2.0.1 REQUIRED)
@@ -109,17 +109,21 @@ endif()
 #############
 include(GNUInstallDirs) # for correct libraries locations across platforms
 set(config_package_location "share/${PROJECT_NAME}/cmake") # for .cmake find-scripts installs
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets
+install(
+  TARGETS ${PROJECT_NAME} ${PROJECT_NAME}-example 
+  EXPORT ${PROJECT_NAME}-targets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/towr
 )
 # Copy header files
-install(DIRECTORY include/towr/
+install(
+  DIRECTORY include/towr/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/towr
 )
 # Auto generate and install the find scripts helpers
-install(EXPORT ${PROJECT_NAME}-targets
+install(
+  EXPORT ${PROJECT_NAME}-targets
   FILE ${PROJECT_NAME}-targets.cmake
   NAMESPACE towr::
   DESTINATION ${config_package_location}

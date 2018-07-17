@@ -59,10 +59,11 @@ TowrRos::TowrRos ()
   robot_parameters_pub_  = n.advertise<xpp_msgs::RobotParameters>
                                     (xpp_msgs::robot_parameters, 1);
 
-  solver_ = std::make_shared<ifopt::Ipopt>(); // could also use SNOPT here
-  solver_->print_level_ = 5;
-  solver_->max_cpu_time_ = 10.0;
-  solver_->use_jacobian_approximation_ = false;
+  solver_ = std::make_shared<ifopt::IpoptSolver>(); // could also use SNOPT here
+  solver_->SetOption("linear_solver", "mumps");
+  solver_->SetOption("jacobian_approximation", "exact");
+  solver_->SetOption("max_cpu_time", 40.0);
+  solver_->SetOption("print_level", 5);
 
   visualization_dt_ = 0.02;
 }
@@ -99,22 +100,28 @@ TowrRos::PublishInitial()
 void
 TowrRos::UserCommandCallback(const TowrCommandMsg& msg)
 {
+  // robot model
   RobotModel model(static_cast<RobotModel::Robot>(msg.robot));
   auto robot_params_msg = BuildRobotParametersMsg(model);
   robot_parameters_pub_.publish(robot_params_msg);
 
+  // initial state
   SetInitialFromNominal(model.kinematic_model_->GetNominalStanceInBase());
   PublishInitial();
 
+  // goal state
   BaseState goal;
   goal.lin.at(kPos) = xpp::Convert::ToXpp(msg.goal_lin.pos);
   goal.lin.at(kVel) = xpp::Convert::ToXpp(msg.goal_lin.vel);
   goal.ang.at(kPos) = xpp::Convert::ToXpp(msg.goal_ang.pos);
   goal.ang.at(kVel) = xpp::Convert::ToXpp(msg.goal_ang.vel);
 
-  Parameters params;
-  params.t_total_ = msg.total_duration;
+  // terrain
+  auto terrain_id = static_cast<HeightMap::TerrainID>(msg.terrain);
+  terrain_ = HeightMap::MakeTerrain(terrain_id);
 
+  // solver parameters
+  Parameters params;
   int n_ee = model.kinematic_model_->GetNumberOfEndeffectors();
   auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee);
   auto id_gait   = static_cast<GaitGenerator::Combos>(msg.gait);
@@ -123,10 +130,11 @@ TowrRos::UserCommandCallback(const TowrCommandMsg& msg)
     params.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(msg.total_duration, ee));
     params.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
   }
+  params.SetSwingConstraint();
+  if (msg.optimize_phase_durations)
+    params.OptimizePhaseDurations();
 
-  auto terrain_id = static_cast<HeightMap::TerrainID>(msg.terrain);
-  terrain_ = HeightMap::MakeTerrain(terrain_id);
-
+  // TOWR
   towr_.SetInitialState(initial_base_, initial_ee_pos_);
   towr_.SetParameters(goal, params, model, terrain_);
 
@@ -140,10 +148,10 @@ TowrRos::UserCommandCallback(const TowrCommandMsg& msg)
 
   // playback using terminal commands
   if (msg.replay_trajectory || msg.optimize) {
-
     int success = system(("rosbag play --topics "
         + xpp_msgs::robot_state_desired + " "
         + xpp_msgs::terrain_info
+        + " -r " + std::to_string(msg.replay_speed)
         + " --quiet " + bag_file).c_str());
   }
 
@@ -176,7 +184,6 @@ TowrRos::GetTrajectory () const
   EulerConverter base_angular(solution.base_angular_);
 
   while (t<=T+1e-5) {
-
     int n_ee = solution.ee_motion_.size();
     xpp::RobotStateCartesian state(n_ee);
 
@@ -187,7 +194,6 @@ TowrRos::GetTrajectory () const
     state.base_.ang.wd = base_angular.GetAngularAccelerationInWorld(t);
 
     for (int ee_towr=0; ee_towr<n_ee; ++ee_towr) {
-
       int ee_xpp = ToXppEndeffector(n_ee, ee_towr).first;
 
       state.ee_contact_.at(ee_xpp) = solution.phase_durations_.at(ee_towr)->IsContactPhase(t);

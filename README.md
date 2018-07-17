@@ -11,22 +11,25 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/ethz-adrl/towr/badge)](https://www.codefactor.io/repository/github/ethz-adrl/towr)
 [![License BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](https://tldrlegal.com/license/bsd-3-clause-license-%28revised%29#fulltext)
 
-
-This Eigen-based library implements variables, costs and constraints that can be used to formulate and solve a legged locomotion optimization problem. It has been used to generate a variety of motions such as monoped hopping, biped walking, or a complete quadruped trotting cycle, while optimizing over the gait and step durations in less than 100ms ([paper](https://ieeexplore.ieee.org/document/8283570/)).  
+A base-set of variables, costs and constraints that can be combined and extended to formulate trajectory optimization problems for legged systems. These implementations have been used to generate a variety of motions such as monoped hopping, biped walking, or a complete quadruped trotting cycle, while optimizing over the gait and step durations in less than 100ms ([paper](https://ieeexplore.ieee.org/document/8283570/)).  
 
 Features:  
-:heavy_check_mark: Inuitive formulations of variables, cost and constraints using [Eigen].   
-:heavy_check_mark: [ifopt] allows to choose between [Ipopt] or [Snopt] to solve the NLP.    
-:heavy_check_mark: fast performance due to Eigen sparse matrix exploitation.  
-:heavy_check_mark: light-weight ([~6k lines](https://i.imgur.com/gP3gv34.png) of code) makes it easy to use and extend with own formulations.  
-:heavy_check_mark: elegant rviz visualization of motion plans using [xpp].  
-:heavy_check_mark: [catkin] integration (optional).  
+:heavy_check_mark: Inuitive and efficient formulation of variables, cost and constraints using [Eigen].   
+:heavy_check_mark: [ifopt] enables using the high-performance solvers [Ipopt] and [Snopt].  
+:heavy_check_mark: Elegant rviz visualization of motion plans using [xpp].  
+:heavy_check_mark: [ROS]/[catkin] integration (optional).  
+:heavy_check_mark: Light-weight ([~6k lines](https://i.imgur.com/gP3gv34.png) of code) makes it easy to use and extend.  
 
-[<img src="https://i.imgur.com/j8lt5SE.png" />](https://youtu.be/0jE46GqzxMM "Play video on Youtube")
+[<img src="https://i.imgur.com/8M4v4aP.gif" />](https://youtu.be/0jE46GqzxMM "Show more examples on Youtube")
 
 
-## Building
-There are two ways to build this code:
+## Install
+The easiest way to install is through the [ROS binaries](http://wiki.ros.org/towr):
+```bash
+sudo apt-get install ros-<ros-distro>-towr_ros
+```
+
+In case these don't yet exist for your distro, there are two ways to build this code from source:
 * [Option 1](#towr-with-cmake): core library and hopper-example with pure [CMake].
 * [Option 2](#towr-ros-with-catkin) (recommended): core library & GUI & ROS-rviz-visualization built with [catkin] and [ROS]. 
 
@@ -42,7 +45,7 @@ There are two ways to build this code:
   ```bash
   git clone https://github.com/ethz-adrl/towr.git && cd towr/towr
   mkdir build && cd build
-  cmake ..
+  cmake .. -DCMAKE_BUILD_TYPE=Release
   make
   sudo make install # copies files in this folder to /usr/local/*
   # sudo xargs rm < install_manifest.txt # in case you want to uninstall the above
@@ -76,7 +79,7 @@ We provide a [ROS]-wrapper for the pure cmake towr library, which adds a keyboar
   git clone https://github.com/ethz-adrl/ifopt.git
   git clone https://github.com/ethz-adrl/towr.git
   cd ..
-  catkin_make_isolated  # `catkin build` if you are using catkin command-line tools 
+  catkin_make_isolated -DCMAKE_BUILD_TYPE=Release # or `catkin build`
   source ./devel/setup.bash
   ```
   
@@ -98,13 +101,16 @@ We provide a [ROS]-wrapper for the pure cmake towr library, which adds a keyboar
   ```bash
   roslaunch towr_ros towr_ros.launch
   ```
-  Click in the xterm terminal and hit 'o'.
-
-[<img src="https://i.imgur.com/LNuyEIn.gif" />](https://www.youtube.com/embed/7dP_QTPOyQ8?rel=0&autoplay=1)
+  Click in the xterm terminal and hit 'o'. 
+  
+  [![Documentation](https://img.shields.io/badge/docs-generated-brightgreen.svg)](http://docs.ros.org/kinetic/api/towr/html/)
+  For more detailed information on the parameters and how to tune them according to your problem, please see the
+  doxygen [documentation](http://docs.ros.org/kinetic/api/towr/html/). 
 
 
 ## Publications
 The theory behind this code can be found in this paper:  
+
 A. W. Winkler, D. Bellicoso, M. Hutter, J. Buchli, [Gait and Trajectory Optimization for Legged Systems through Phase-based End-Effector Parameterization](https://awinkler.github.io/publications), IEEE Robotics and Automation Letters (RA-L), 2018:
 
     @article{winkler18,
@@ -124,13 +130,14 @@ A. W. Winkler, D. Bellicoso, M. Hutter, J. Buchli, [Gait and Trajectory Optimiza
 ## Authors 
 [Alexander W. Winkler](http://awinkler.me) - Initial Work/Maintainer
 
+The work was carried out at the following institutions:
+
 [<img src="https://i.imgur.com/aGOnNTZ.png" height="45" />](https://www.ethz.ch/en.html "ETH Zurich") &nbsp; &nbsp; &nbsp; &nbsp; [<img src="https://i.imgur.com/uCvLs2j.png" height="45" />](http://www.adrl.ethz.ch/doku.php "Agile and Dexterous Robotics Lab")  &nbsp; &nbsp; &nbsp; &nbsp;[<img src="https://i.imgur.com/gYxWH9p.png" height="45" />](http://www.rsl.ethz.ch/ "Robotic Systems Lab")
 
 
 
 ## Contributing
 We love pull request, whether its new constraint formulations, additional robot models, bug fixes, unit tests or updating the documentation. Please have a look at [CONTRIBUTING.md](CONTRIBUTING.md) for more information.  
-
 See here the list of [contributors](https://github.com/ethz-adrl/towr/graphs/contributors) who participated in this project.
 
 
@@ -159,4 +166,3 @@ To report bugs, request features or ask questions, please have a look at [CONTRI
 [catkin]: http://wiki.ros.org/catkin
 [catkin tools]: http://catkin-tools.readthedocs.org/
 [Eigen]: http://eigen.tuxfamily.org
-[Fa2png]: http://fa2png.io/r/font-awesome/link/

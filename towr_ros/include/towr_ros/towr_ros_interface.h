@@ -27,8 +27,8 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************/
 
-#ifndef XPP_OPT_INCLUDE_XPP_ROS_NLP_OPTIMIZER_NODE_H_
-#define XPP_OPT_INCLUDE_XPP_ROS_NLP_OPTIMIZER_NODE_H_
+#ifndef TOWR_INCLUDE_TOWR_ROS_TOWR_ROS_H_
+#define TOWR_INCLUDE_TOWR_ROS_TOWR_ROS_H_
 
 #include <string>
 
@@ -40,45 +40,68 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <xpp_msgs/RobotParameters.h>
 #include <towr_ros/TowrCommand.h>
 
-#include <towr/towr.h>
+#include <towr/nlp_formulation.h>
 #include <ifopt/ipopt_solver.h>
 
 
 namespace towr {
 
-class TowrRos {
+
+/**
+ * @brief Base class to interface TOWR with a ROS GUI and RVIZ.
+ *
+ * This is very convenient to change goal states or terrains on the fly and
+ * test how your formulation holds up. A sample application implementing this
+ * interface is TowrRosApp.
+ */
+class TowrRosInterface {
 public:
   using XppVec         = std::vector<xpp::RobotStateCartesian>;
   using TowrCommandMsg = towr_ros::TowrCommand;
   using Vector3d       = Eigen::Vector3d;
 
-  TowrRos ();
-  virtual ~TowrRos () = default;
+protected:
+  TowrRosInterface ();
+  virtual ~TowrRosInterface () = default;
+
+  /**
+   * @brief Sets the base state and end-effector position.
+   */
+  virtual void SetTowrInitialState() = 0;
+
+  /**
+   * @brief Formulates the actual TOWR problem to be solved
+   * @param msg User message to adjust the parameters dynamically.
+   *
+   * When formulating your own application, here you can set your specific
+   * set of constraints and variables.
+   */
+  virtual Parameters GetTowrParameters(int n_ee, const TowrCommandMsg& msg) const = 0;
+
+  /**
+   * @brief Sets the parameters of the nonlinear programming solver IPOPT.
+   * @param msg User message that can be used to change the parameters.
+   */
+  virtual void SetIpoptParameters(const TowrCommandMsg& msg) = 0;
+
+  NlpFormulation formulation_;         ///< the default formulation, can be adapted
+  ifopt::IpoptSolver::Ptr solver_; ///< NLP solver, could also use SNOPT.
 
 private:
-  void UserCommandCallback(const TowrCommandMsg& msg);
+  SplineHolder solution; ///< the solution splines linked to the opt-variables.
+  ifopt::Problem nlp_;   ///< the actual nonlinear program to be solved.
+  double visualization_dt_; ///< duration between two rviz visualization states.
 
-  XppVec GetTrajectory() const;
-
-  // publishing to rviz with ROS bag
   ::ros::Subscriber user_command_sub_;
   ::ros::Publisher initial_state_pub_;
   ::ros::Publisher robot_parameters_pub_;
 
-  void SetInitialFromNominal(const std::vector<Vector3d>& nomial_stance_B);
-  void PublishInitial();
-  BaseState initial_base_;
-  std::vector<Vector3d> initial_ee_pos_;
-
-  HeightMap::Ptr terrain_;
-  TOWR towr_;
-  ifopt::IpoptSolver::Ptr solver_;
-  double visualization_dt_; ///< discretization of output trajectory (1/TaskServoHz)
-
-private:
+  void UserCommandCallback(const TowrCommandMsg& msg);
+  XppVec GetTrajectory() const;
+  virtual BaseState GetGoalState(const TowrCommandMsg& msg) const;
+  void PublishInitialState();
   std::vector<XppVec>GetIntermediateSolutions();
   xpp_msgs::RobotParameters BuildRobotParametersMsg(const RobotModel& model) const;
-
   void SaveOptimizationAsRosbag(const std::string& bag_name,
                                 const xpp_msgs::RobotParameters& robot_params,
                                 const TowrCommandMsg user_command_msg,

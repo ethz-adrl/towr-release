@@ -1,0 +1,13 @@
+Source: ros-melodic-towr-ros
+Section: misc
+Priority: extra
+Maintainer: Alexander W. Winkler <alexander.w.winkler@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), libncurses5-dev, ros-melodic-catkin, ros-melodic-message-generation, ros-melodic-message-runtime, ros-melodic-rosbag, ros-melodic-roscpp, ros-melodic-std-msgs, ros-melodic-towr, ros-melodic-visualization-msgs, ros-melodic-xpp-msgs, ros-melodic-xpp-states
+Homepage: http://github.com/ethz-adrl/towr
+Standards-Version: 3.9.2
+
+Package: ros-melodic-towr-ros
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libncurses5-dev, ros-melodic-message-generation, ros-melodic-message-runtime, ros-melodic-rosbag, ros-melodic-roscpp, ros-melodic-rqt-bag, ros-melodic-rviz, ros-melodic-std-msgs, ros-melodic-towr, ros-melodic-visualization-msgs, ros-melodic-xpp-hyq, ros-melodic-xpp-msgs, ros-melodic-xpp-states, xterm
+Description: A ROS dependent wrapper for towr.
+ Adds a keyboard user interface to set different goal states, motions and robots and visualizes the produced motions plan in rviz using xpp.

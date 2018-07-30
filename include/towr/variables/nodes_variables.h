@@ -37,74 +37,102 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace towr {
 
+/**
+ * @defgroup Variables
+ * @brief Variables of the trajectory optimization problem.
+ *
+ * These are the quantities through which the optimization problem is
+ * parameterized.
+ *
+ * Folder: @ref include/towr/variables.
+ */
 
 /**
  * @brief Position and velocity of nodes used to generate a Hermite spline.
  *
+ * #### Four nodes defining a single spline (e.g. foot position in x-direction)
+ * \image html nodes.jpg
+ *
  * Instead of setting the polynomial coefficients directly, a third-order
  * polynomial is also fully defined by the value and first-derivative of the
- * start and end of the polynomial as well as the duration. This way of
- * specifying a polynomial is called "Hermite". These are the node values
- * composed of position and velocity.
+ * start and end of the polynomial as well as the duration. This class holds
+ * these node values composed of position and velocity.
+ *
+ * In the above image the nodes are defined by the scalar position and velocity
+ * values x0, x0d, ..., xT, xTd. By optimizing over these nodes, different
+ * spline shapes are generated. It is important to note that **not all node
+ * values must be optimized over**. We can fix specific node values in advance, or
+ * _one_ optimization variables can represent _multiple_ nodes values in the
+ * spline. This is exploited in the subclass NodesVariablesPhaseBased using
+ * _Phase-based End-effector Parameterization_.
  *
  * @ingroup Variables
- * @sa class CubicHermitePolynomial
  */
-class Nodes : public ifopt::VariableSet {
+class NodesVariables : public ifopt::VariableSet {
 public:
-  using Ptr          = std::shared_ptr<Nodes>;
+  using Ptr          = std::shared_ptr<NodesVariables>;
   using VecDurations = std::vector<double>;
   using ObserverPtr  = NodesObserver*;
 
   /**
-   * @brief Holds information about the node the optimization index represents.
+   * @brief Semantic information associated with a scalar node value.
+   *
+   * This includes all information except the actual value. This comes from
+   * the vector of optimization variables.
+   *
+   * @sa GetNodeValuesInfo()
    */
-  struct IndexInfo {
-    int node_id_;   ///< The ID of the node of the optimization index.
-    Dx node_deriv_; ///< The derivative (pos,vel) of that optimziation index.
-    int node_dim_;  ///< the dimension (x,y,z) of that optimization index.
+  struct NodeValueInfo {
+    int id_;   ///< ID of the associated node (0 =< id < number of nodes in spline).
+    Dx deriv_; ///< Derivative (pos,vel) of the node with that ID.
+    int dim_;  ///< Dimension (x,y,z) of that derivative.
 
-    IndexInfo() = default;
-    IndexInfo(int node_id, Dx deriv, int node_dim);
-    int operator==(const IndexInfo& right) const;
+    NodeValueInfo() = default;
+    NodeValueInfo(int node_id, Dx deriv, int node_dim);
+    int operator==(const NodeValueInfo& right) const;
   };
 
   /**
-   * @brief The node information that the optimization index represents.
-   * @param idx  The index (=row) of the node optimization variable.
-   * @return Semantic information on what that optimization variables means.
+   * @brief Node values affected by one specific optimization variable.
+   * @param opt_idx  The index (=row) of the optimization variable.
+   * @return All node values affected by this optimization variable.
    *
-   * One optimization variables can also represent multiple nodes in the spline
-   * if they are always equal (e.g. constant phases). This is why this function
-   * returns a vector.
+   * This function determines which node values are optimized over, and which
+   * nodes values are set by the same optimization variable.
+   *
+   * Reverse of GetOptIndex().
    */
-  virtual std::vector<IndexInfo> GetNodeInfoAtOptIndex(int idx) const = 0;
+  virtual std::vector<NodeValueInfo> GetNodeValuesInfo(int opt_idx) const = 0;
 
   /**
-   * @brief The index at which a specific node variable is stored.
-   * @param node_info The node variable we want to know the index for.
+   * @brief Index in the optimization vector for a specific nodes' pos/vel.
+   * @param nvi Description of node value we want to know the index for.
    * @return The position of this node value in the optimization variables.
+   *
+   * Reverse of GetNodeInfoAtOptIndex().
    */
-  int Index(const IndexInfo& node_info) const;
-  int Index(int node_id, Dx deriv, int node_dim) const;
+  int GetOptIndex(const NodeValueInfo& nvi) const;
+  static const int NodeValueNotOptimized = -1;
 
   /**
-   * @brief Sets nodes pos/vel equally spaced from initial to final position.
-   * @param initial_pos  The position of the first node.
-   * @param final_pos  The position of the final node.
-   * @param t_total  The total duration to reach final node (to set velocities).
-   */
-  void InitializeNodesTowardsGoal(const VectorXd& initial_pos,
-                                  const VectorXd& final_pos,
-                                  double t_total);
-  /**
-   * @returns the stacked node position and velocity values.
+   * @brief Pure optimization variables that define the nodes.
+   *
+   * Not all node position and velocities are independent or optimized over, so
+   * usually the number of optimization variables is less than all nodes' pos/vel.
+   *
+   * @sa GetNodeInfoAtOptIndex()
    */
   VectorXd GetValues () const override;
 
   /**
-   * @brief Sets the node position and velocity optimization variables.
-   * @param x The stacked variables.
+   * @brief Sets some node positions and velocity from the optimization variables.
+   * @param x The optimization variables.
+   *
+   * Not all node position and velocities are independent or optimized over, so
+   * usually the number of optimization variables is less than
+   * all nodes pos/vel.
+   *
+   * @sa GetNodeValuesInfo()
    */
   void SetVariables (const VectorXd&x) override;
 
@@ -148,6 +176,16 @@ public:
   int GetDim() const;
 
   /**
+   * @brief Sets nodes pos/vel equally spaced from initial to final position.
+   * @param initial_val  value of the first node.
+   * @param final_val  value of the final node.
+   * @param t_total  The total duration to reach final node (to set velocities).
+   */
+  void SetByLinearInterpolation(const VectorXd& initial_val,
+                                const VectorXd& final_val,
+                                double t_total);
+
+  /**
    * @brief Restricts the first node in the spline.
    * @param deriv Which derivative (pos,vel,...) should be restricted.
    * @param dimensions Which dimensions (x,y,z) should be restricted.
@@ -170,25 +208,14 @@ protected:
    * @param n_dim  The number of dimensions (x,y,..) each node has.
    * @param variable_name  The name of the variables in the optimization problem.
    */
-  Nodes (int n_dim, const std::string& variable_name);
-  virtual ~Nodes () = default;
+  NodesVariables (const std::string& variable_name);
+  virtual ~NodesVariables () = default;
 
   VecBound bounds_; ///< the bounds on the node values.
-
-  /**
-   * @brief initializes the member variables.
-   * @param n_nodes  The number of nodes composing the spline.
-   * @param n_variables  The number of variables being optimized over.
-   *
-   * Not every node value must be optimized, so n_variables can be different
-   * than 2*n_nodes*n_dim.
-   */
-  void InitMembers(int n_nodes, int n_variables);
-
-private:
   std::vector<Node> nodes_;
   int n_dim_;
 
+private:
   /**
    * @brief Notifies the subscribed observers that the node values changes.
    */
@@ -209,7 +236,7 @@ private:
    * @param node_info The specs of the optimization variables to restrict.
    * @param value     The value to set the bounds to.
    */
-  void AddBound(const IndexInfo& node_info, double value);
+  void AddBound(const NodeValueInfo& node_info, double value);
 };
 
 } /* namespace towr */

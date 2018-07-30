@@ -31,14 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TOWR_TOWR_ROS_INCLUDE_TOWR_ROS_ANYMAL_MODEL_H_
 
 #include <towr/models/kinematic_model.h>
-#include <towr/models/centroidal_model.h>
+#include <towr/models/single_rigid_body_dynamics.h>
 #include <towr/models/endeffector_mappings.h>
 
 namespace towr {
 
 /**
- * \addtogroup Robots
- * @{
+ * @brief The Kinematics of the quadruped robot ANYmal.
  */
 class AnymalKinematicModel : public KinematicModel {
 public:
@@ -57,15 +56,16 @@ public:
   }
 };
 
-
-class AnymalDynamicModel : public CentroidalModel {
+/**
+ * @brief The Dynamics of the quadruped robot ANYmal.
+ */
+class AnymalDynamicModel : public SingleRigidBodyDynamics {
 public:
   AnymalDynamicModel()
-  : CentroidalModel(29.5,
+  : SingleRigidBodyDynamics(29.5,
                     0.946438, 1.94478, 2.01835, 0.000938112, -0.00595386, -0.00146328,
                     4) {}
 };
-/** @}*/
 
 } // namespace towr
 

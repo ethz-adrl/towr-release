@@ -31,14 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TOWR_TOWR_ROS_INCLUDE_TOWR_ROS_HYQ_MODEL_H_
 
 #include <towr/models/kinematic_model.h>
-#include <towr/models/centroidal_model.h>
+#include <towr/models/single_rigid_body_dynamics.h>
 #include <towr/models/endeffector_mappings.h>
 
 namespace towr {
 
 /**
- * \addtogroup Robots
- * @{
+ * @brief The Kinematics of the quadruped robot HyQ.
  */
 class HyqKinematicModel : public KinematicModel {
 public:
@@ -57,13 +56,15 @@ public:
   }
 };
 
-class HyqDynamicModel : public CentroidalModel {
+/**
+ * @brief The Dynamics of the quadruped robot HyQ.
+ */
+class HyqDynamicModel : public SingleRigidBodyDynamics {
 public:
-  HyqDynamicModel() : CentroidalModel(83,
+  HyqDynamicModel() : SingleRigidBodyDynamics(83,
                       4.26, 8.97, 9.88, -0.0063, 0.193, 0.0126,
                       4) {}
 };
-/** @}*/
 
 } /* namespace towr */
 

@@ -27,34 +27,37 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************/
 
-#include <towr/variables/base_nodes.h>
-#include <towr/variables/cartesian_dimensions.h>
+#include <towr/variables/nodes_variables_all.h>
 
 namespace towr {
 
-BaseNodes::BaseNodes (int n_nodes, std::string name) : Nodes(k3D, name)
+NodesVariablesAll::NodesVariablesAll (int n_nodes, int n_dim, std::string variable_id)
+    : NodesVariables(variable_id)
 {
-  int n_derivs = 2; // position and velocity
-  int n_variables = n_nodes*n_derivs*k3D;
-  InitMembers(n_nodes, n_variables);
+  int n_opt_variables = n_nodes*Node::n_derivatives*n_dim;
+
+  n_dim_ = n_dim;
+  nodes_  = std::vector<Node>(n_nodes, Node(n_dim));
+  bounds_ = VecBound(n_opt_variables, ifopt::NoBound);
+  SetRows(n_opt_variables);
 }
 
-std::vector<BaseNodes::IndexInfo>
-BaseNodes::GetNodeInfoAtOptIndex (int idx) const
+std::vector<NodesVariablesAll::NodeValueInfo>
+NodesVariablesAll::GetNodeValuesInfo (int idx) const
 {
-  std::vector<IndexInfo> nodes;
+  std::vector<NodeValueInfo> vec_nvi;
 
   int n_opt_values_per_node_ = 2*GetDim();
   int internal_id = idx%n_opt_values_per_node_; // 0...6 (p.x, p.y, p.z, v.x, v.y. v.z)
 
-  IndexInfo node;
-  node.node_deriv_ = internal_id<GetDim()? kPos : kVel;
-  node.node_dim_   = internal_id%GetDim();
-  node.node_id_    = std::floor(idx/n_opt_values_per_node_);
+  NodeValueInfo nvi;
+  nvi.deriv_ = internal_id<GetDim()? kPos : kVel;
+  nvi.dim_   = internal_id%GetDim();
+  nvi.id_    = std::floor(idx/n_opt_values_per_node_);
 
-  nodes.push_back(node);
+  vec_nvi.push_back(nvi);
 
-  return nodes;
+  return vec_nvi;
 }
 
 } /* namespace towr */

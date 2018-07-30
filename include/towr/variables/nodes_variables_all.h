@@ -27,25 +27,34 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************/
 
-#include <gtest/gtest.h>
+#ifndef TOWR_TOWR_INCLUDE_TOWR_VARIABLES_BASE_NODES_H_
+#define TOWR_TOWR_INCLUDE_TOWR_VARIABLES_BASE_NODES_H_
 
-#include <towr/models/centroidal_model.h>
+#include "nodes_variables.h"
 
 namespace towr {
 
-TEST(CentroidalDynamicsTest, GetBaseAcceleration)
-{
-  // update test
-}
+/**
+ * @brief Node variables used to construct the base motion spline.
+ *
+ * Every node is optimized over, in contrast to PhaseNodes, where multiple
+ * nodes in the spline are represented by the same optimization variables.
+ *
+ * @ingroup Variables
+ */
+class NodesVariablesAll : public NodesVariables {
+public:
+  /**
+   * @param n_nodes  Number of nodes to construct the spline.
+   * @param n_dim    Number of dimensions of each node.
+   * @param variable_id  Name of this variables set in the optimization.
+   */
+  NodesVariablesAll (int n_nodes, int n_dim, std::string variable_id);
+  virtual ~NodesVariablesAll () = default;
 
-TEST(CentroidalDynamicsTest, GetJacobianOfAccWrtBase)
-{
-  // update test
-}
+  std::vector<NodeValueInfo> GetNodeValuesInfo(int idx) const override;
+};
 
-TEST(CentroidalDynamicsTest, TestRotations)
-{
-  // update test
-}
+} /* namespace towr */
 
-} /* namespace xpp */
+#endif /* TOWR_TOWR_INCLUDE_TOWR_VARIABLES_BASE_NODES_H_ */

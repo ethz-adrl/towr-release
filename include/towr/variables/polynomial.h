@@ -49,8 +49,6 @@ namespace towr {
  *
  * This class is responsible for calculating the values f(t) and higher order
  * derivatives from the coefficient values.
- *
- * @ingroup Variables
  */
 class Polynomial {
 public:
@@ -101,6 +99,10 @@ private:
  * polynomial is also fully defined by the value and first-derivative of the
  * start and end of the polynomial as well as the duration. This way of
  * specifying a polynomial is called "Hermite".
+ *
+ * | Three Cubic-Hermite-Polynomials | |
+ * | -------|------ |
+ * | \image html nodes.jpg | |
  *
  * See also matlab/cubic_hermite_polynomial.m for generation of derivatives.
  */

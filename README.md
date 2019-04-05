@@ -1,3 +1,28 @@
+## towr (lunar) - 1.4.1-0
+
+The packages in the `towr` repository were released into the `lunar` distro by running `/usr/bin/bloom-release towr --rosdistro lunar` on `Fri, 05 Apr 2019 16:28:29 -0000`
+
+These packages were released:
+- `towr`
+- `towr_ros`
+
+Version of package(s) in repository `towr`:
+
+- upstream repository: https://github.com/ethz-adrl/towr.git
+- release repository: https://github.com/ethz-adrl/towr-release.git
+- rosdistro version: `1.4.0-0`
+- old version: `1.4.0-0`
+- new version: `1.4.1-0`
+
+Versions of tools used:
+
+- bloom version: `0.7.2`
+- catkin_pkg version: `0.4.11`
+- rosdep version: `0.15.1`
+- rosdistro version: `0.7.2`
+- vcstools version: `0.1.40`
+
+
 ## towr (kinetic) - 1.4.1-0
 
 The packages in the `towr` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release towr --rosdistro kinetic` on `Fri, 05 Apr 2019 16:24:39 -0000`

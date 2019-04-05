@@ -1,0 +1,100 @@
+ros-kinetic-towr-ros (1.4.1-0xenial) xenial; urgency=high
+
+  * Merge pull request (#56 <https://github.com/ethz-adrl/towr/issues/56>) from ethz-adrl/expose-params
+  * Contributors: Alexander Winkler, awinkler
+
+ -- Alexander W. Winkler <alexander.w.winkler@gmail.com>  Thu, 04 Apr 2019 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.4.0-0xenial) xenial; urgency=high
+
+  * Facilitate towr_ros user extension (#34 <https://github.com/ethz-adrl/towr/issues/34>)
+  * Add easy plotting of trajectories with rqt_bag
+  * add option to visualize variable initialization
+  * Allow shorthand to launch with gdb
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <alexander.w.winkler@gmail.com>  Sun, 29 Jul 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.3.2-0xenial) xenial; urgency=high
+
+  * adapt to more generic ifopt solver interface.
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <alexander.w.winkler@gmail.com>  Mon, 16 Jul 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.3.1-0xenial) xenial; urgency=high
+
+  * Improve API (#23 <https://github.com/ethz-adrl/towr/issues/23>)
+  * add gait optimization and replay speed to UI
+  * Add ROS and codefactor badges to readme (#22 <https://github.com/ethz-adrl/towr/issues/22>)
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <alexander.w.winkler@gmail.com>  Mon, 09 Jul 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.3.0-0xenial) xenial; urgency=high
+
+  * visualize goal state on terrain
+  * Remove redundant rviz terrain visualizer and instead generate
+    surface patches directly from height map information
+  * correctly visualize rviz range-of-motion boxes
+  * visualize first state
+  * make GUI static
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Fri, 06 Jul 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.2.2-0xenial) xenial; urgency=high
+
+  * remove controller specifc code from towr_ros
+  * removed exe subfolder
+  * moved height map from towr_ros to towr
+  * moved robots models and gait generator from towr_ros to towr
+  * move dynamic and kinematic models from towr_ros -> towr
+  * add ncurses and xterm dependencies to package.xml
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Mon, 02 Jul 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.2.1-0xenial) xenial; urgency=high
+
+  * adapt to revised ifopt version and build structure
+  * preparation for ANYmal experiments
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Fri, 29 Jun 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.2.0-0xenial) xenial; urgency=high
+
+  * adapt to version 2.0.0 of ifopt (#17 <https://github.com/ethz-adrl/ifopt/pull/17>)
+  * fix discrepancy between gap height map and rviz visualization
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Sun, 24 Jun 2018 22:00:00 -0000
+
+ros-kinetic-towr-ros (1.1.0-0xenial) xenial; urgency=high
+
+  * improve launch files and class names
+  * add metapackage towr and move algorithm to towr_core
+  * create separate ros independent example package "towr_examples"
+  * adapt to separated ifopt packages
+  * replaced ros-keyboard dependency with ncurses
+  * clean-up matlab scripts
+  * clean and document towr_ros
+  * add documentaton to angular_state_converter->euler_converter
+  * moved all robot specific model/gait generators out of towr -> towr_ros
+  * use only one unified represenatation for nodes and states
+  * added spline_holder to not always have to reconstruct from variables
+  * separated spline and node values
+  * changed to different namespace towr
+  * renamed pkg from xpp_opt to towr
+  * Contributors: Alexander Winkler
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Mon, 05 Feb 2018 23:00:00 -0000
+
+ros-kinetic-towr-ros (1.0.0-0xenial) xenial; urgency=high
+
+
+
+ -- Alexander W. Winkler <winklera@ethz.ch>  Mon, 18 Sep 2017 22:00:00 -0000
+
+

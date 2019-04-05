@@ -36,7 +36,7 @@ Features:
 ## Install
 The easiest way to install is through the [ROS binaries](http://wiki.ros.org/towr):
 ```bash
-sudo apt-get install ros-<ros-distro>-towr_ros
+sudo apt-get install ros-<ros-distro>-towr-ros
 ```
 
 In case these don't yet exist for your distro, there are two ways to build this code from source:
@@ -90,7 +90,7 @@ We provide a [ROS]-wrapper for the pure cmake towr library, which adds a keyboar
   git clone https://github.com/ethz-adrl/towr.git
   cd ..
   catkin_make_isolated -DCMAKE_BUILD_TYPE=Release # or `catkin build`
-  source ./devel/setup.bash
+  source ./devel_isolated/setup.bash
   ```
   
 * Use: Include in your catkin project by adding to your *CMakeLists.txt* 
@@ -164,7 +164,7 @@ the Single-Rigid-Body Dynamics model used in this work:
 
 
 ## Authors 
-[Alexander W. Winkler](http://awinkler.me) - Initial Work/Maintainer
+[Alexander W. Winkler](https://www.alex-winkler.com) - Initial Work/Maintainer
 
 The work was carried out at the following institutions:
 
